@@ -5,9 +5,31 @@ import {
   createProductCategoriesWorkflow,
   createProductOptionsWorkflow,
   createProductsWorkflow,
+  deleteProductsWorkflow,
 } from "@medusajs/medusa/core-flows";
 
-const img = (name: string) => ({ url: `/products/${name}.svg` });
+// Images are served by the Medusa backend itself (from ./static, the
+// default local file provider directory) rather than from any one
+// storefront's /public folder, so every storefront reading this catalog
+// resolves the same URL.
+const BACKEND_URL = process.env.MEDUSA_BACKEND_PUBLIC_URL || "http://localhost:9000";
+
+const img = (name: string) => ({ url: `${BACKEND_URL}/static/products/${name}.svg` });
+
+const PRODUCT_HANDLES = [
+  "testa-di-moro-ceramic-vase",
+  "trinacria-vase",
+  "caltagirone-decorative-plate",
+  "sciacca-red-coral-necklace",
+  "coral-drop-earrings",
+  "sicilian-wicker-basket",
+  "embroidered-linen-tablecloth",
+  "sicilian-coppola-cap",
+  "olive-wood-cutting-board",
+  "olive-wood-spoon-set",
+  "collectible-sicilian-pupo",
+  "miniature-sicilian-cart",
+];
 
 export default async function seed_sicilian_products({
   container,
@@ -84,19 +106,36 @@ export default async function seed_sicilian_products({
 
   logger.info("Seeding product options...");
 
-  const { result: optionsResult } = await createProductOptionsWorkflow(
-    container
-  ).run({
-    input: {
-      product_options: [
-        { title: "Glaze", values: ["Maiolica Blue", "Lemon Yellow"] },
-        { title: "Basket Size", values: ["Small", "Large"] },
-        { title: "Cap Size", values: ["S", "M", "L"] },
-        { title: "Character", values: ["Knight", "Saracen"] },
-        { title: "Edition", values: ["One of a kind"] },
-      ],
-    },
+const OPTION_DEFS = [
+    { title: "Glaze", values: ["Maiolica Blue", "Lemon Yellow"] },
+    { title: "Basket Size", values: ["Small", "Large"] },
+    { title: "Cap Size", values: ["S", "M", "L"] },
+    { title: "Character", values: ["Knight", "Saracen"] },
+    { title: "Edition", values: ["One of a kind"] },
+  ];
+
+  // These are created "unassigned" (no product yet) and product option
+  // titles are unique regardless of product, so reuse them across runs
+  // instead of recreating.
+  const { data: existingOptions } = await query.graph({
+    entity: "product_option",
+    fields: ["id", "title"],
+    filters: { title: OPTION_DEFS.map((o) => o.title) },
   });
+
+  const missingOptionDefs = OPTION_DEFS.filter(
+    (def) => !existingOptions.some((o) => o.title === def.title)
+  );
+
+  let optionsResult = existingOptions;
+  if (missingOptionDefs.length) {
+    const { result: created } = await createProductOptionsWorkflow(
+      container
+    ).run({
+      input: { product_options: missingOptionDefs },
+    });
+    optionsResult = [...existingOptions, ...created];
+  }
 
   const option = (title: string) =>
     optionsResult.find((o) => o.title === title)!;
@@ -105,6 +144,21 @@ export default async function seed_sicilian_products({
     { amount, currency_code: "eur" },
     { amount: Math.round(amount * 1.1), currency_code: "usd" },
   ];
+
+  // Re-runnable: if a previous run already created these products (e.g. with
+  // stale image URLs), drop them first so this run recreates them cleanly.
+  const { data: existingProducts } = await query.graph({
+    entity: "product",
+    fields: ["id", "handle"],
+    filters: { handle: PRODUCT_HANDLES },
+  });
+
+  if (existingProducts.length) {
+    logger.info(`Removing ${existingProducts.length} existing Sicilian products before reseeding...`);
+    await deleteProductsWorkflow(container).run({
+      input: { ids: existingProducts.map((p) => p.id) },
+    });
+  }
 
   logger.info("Seeding Sicilian products...");
 
