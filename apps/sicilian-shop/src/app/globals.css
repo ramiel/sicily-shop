@@ -1,0 +1,13 @@
+@import "tailwindcss";
+@import "@heroui/styles";
+@import "../styles/theme.css";
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+::selection {
+  background: var(--zafferana);
+  color: var(--inchiostro);
+}

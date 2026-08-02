@@ -1,0 +1,122 @@
+/*
+  Isola — a Mediterranean palette drawn from Caltagirone majolica glazes,
+  not generic terracotta-on-cream. Named after the pigments artisans mix:
+  calce (limewash), inchiostro (cuttlefish ink), maiolica (cobalt glaze),
+  zafferana (saffron/ochre), cotto (fired clay), ulivo (olive leaf).
+*/
+
+:root {
+  --calce: #fbf6ea;
+  --calce-deep: #f3ead5;
+  --surface-warm: #fffdf7;
+  --inchiostro: #2a2420;
+  --inchiostro-soft: #55493d;
+  --maiolica: #1f4d68;
+  --maiolica-deep: #163951;
+  --zafferana: #d68a2e;
+  --zafferana-deep: #b06f21;
+  --cotto: #b6472a;
+  --cotto-deep: #973a22;
+  --ulivo: #6f7c3c;
+  --ulivo-deep: #57612d;
+  --sabbia-border: #e6d8b8;
+
+  color-scheme: light;
+
+  --radius: 0.85rem;
+
+  --background: var(--calce);
+  --foreground: var(--inchiostro);
+
+  --surface: var(--surface-warm);
+  --surface-foreground: var(--inchiostro);
+  --surface-secondary: var(--calce-deep);
+  --surface-secondary-foreground: var(--inchiostro);
+  --surface-tertiary: #efe3c8;
+  --surface-tertiary-foreground: var(--inchiostro);
+
+  --overlay: var(--surface-warm);
+  --overlay-foreground: var(--inchiostro);
+
+  --muted: var(--inchiostro-soft);
+
+  --default: var(--calce-deep);
+  --default-foreground: var(--inchiostro);
+
+  --accent: var(--zafferana);
+  --accent-foreground: var(--inchiostro);
+
+  --field-background: var(--surface-warm);
+  --field-foreground: var(--inchiostro);
+  --field-placeholder: var(--inchiostro-soft);
+  --field-border: var(--sabbia-border);
+
+  --success: var(--ulivo);
+  --success-foreground: var(--calce);
+
+  --warning: var(--zafferana);
+  --warning-foreground: var(--inchiostro);
+
+  --danger: var(--cotto);
+  --danger-foreground: var(--calce);
+
+  --segment: var(--surface-warm);
+  --segment-foreground: var(--inchiostro);
+
+  --border: var(--sabbia-border);
+  --separator: var(--sabbia-border);
+  --focus: var(--maiolica);
+  --link: var(--maiolica);
+
+  --scrollbar-thumb: color-mix(in oklch, var(--inchiostro) 20%, transparent);
+  --scrollbar-track: transparent;
+}
+
+/* Expose the palette as Tailwind utilities: bg-cotto, text-maiolica, etc. */
+@theme inline {
+  --color-calce: var(--calce);
+  --color-calce-deep: var(--calce-deep);
+  --color-surface-warm: var(--surface-warm);
+  --color-inchiostro: var(--inchiostro);
+  --color-inchiostro-soft: var(--inchiostro-soft);
+  --color-maiolica: var(--maiolica);
+  --color-maiolica-deep: var(--maiolica-deep);
+  --color-zafferana: var(--zafferana);
+  --color-zafferana-deep: var(--zafferana-deep);
+  --color-cotto: var(--cotto);
+  --color-cotto-deep: var(--cotto-deep);
+  --color-ulivo: var(--ulivo);
+  --color-ulivo-deep: var(--ulivo-deep);
+  --color-sabbia-border: var(--sabbia-border);
+
+  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-plex-sans);
+  --font-mono: var(--font-plex-mono);
+}
+
+/*
+  Signature motif: a scalloped dot-and-dash rim, lifted from the edge of a
+  hand-painted majolica plate. Used as a recurring divider between sections
+  instead of a plain hairline — the one element this shop should be
+  recognized by.
+*/
+.rim-divider {
+  height: 1.1rem;
+  background-image:
+    radial-gradient(circle, var(--sabbia-border) 1.5px, transparent 1.6px),
+    linear-gradient(to right, var(--sabbia-border) 1px, transparent 1px);
+  background-size:
+    16px 100%,
+    16px 100%;
+  background-position:
+    center 2px,
+    center 10px;
+  background-repeat: repeat-x;
+  opacity: 0.9;
+}
+
+.rim-divider--inverse {
+  background-image:
+    radial-gradient(circle, color-mix(in oklch, var(--calce) 70%, transparent) 1.5px, transparent 1.6px),
+    linear-gradient(to right, color-mix(in oklch, var(--calce) 70%, transparent) 1px, transparent 1px);
+}
