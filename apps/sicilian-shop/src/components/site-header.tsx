@@ -1,13 +1,16 @@
 import Link from "next/link"
 import { TrinacriaMark } from "@/components/trinacria-mark"
 import { CartBadge } from "@/components/cart-badge"
+import { retrieveCustomer } from "@/lib/customer"
 
 const NAV_LINKS = [
   { href: "/store", label: "Shop" },
   { href: "/blog", label: "Journal" },
 ]
 
-export function SiteHeader() {
+export async function SiteHeader() {
+  const customer = await retrieveCustomer()
+
   return (
     <header className="sticky top-0 z-40 border-b border-sabbia-border/70 bg-calce/90 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4">
@@ -31,7 +34,13 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-4">
+          <Link
+            href={customer ? "/account" : "/login"}
+            className="hidden font-sans text-[0.95rem] font-medium text-inchiostro-soft transition-colors hover:text-maiolica sm:block"
+          >
+            {customer ? customer.first_name || "Account" : "Log in"}
+          </Link>
           <CartBadge />
         </div>
       </div>

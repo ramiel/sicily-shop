@@ -86,7 +86,7 @@ export default async function seed_sicilian_products({
     (name) => !existingCategories.some((c) => c.name === name)
   );
 
-  let categoryResult = existingCategories;
+  let categoryResult: { id: string; name: string }[] = existingCategories;
   if (missingCategoryNames.length) {
     const { result: created } = await createProductCategoriesWorkflow(
       container
@@ -98,7 +98,10 @@ export default async function seed_sicilian_products({
         })),
       },
     });
-    categoryResult = [...existingCategories, ...created];
+    categoryResult = [
+      ...existingCategories,
+      ...created.map((c) => ({ id: c.id, name: c.name })),
+    ];
   }
 
   const categoryId = (name: string) =>
@@ -127,14 +130,17 @@ const OPTION_DEFS = [
     (def) => !existingOptions.some((o) => o.title === def.title)
   );
 
-  let optionsResult = existingOptions;
+  let optionsResult: { id: string; title: string }[] = existingOptions;
   if (missingOptionDefs.length) {
     const { result: created } = await createProductOptionsWorkflow(
       container
     ).run({
       input: { product_options: missingOptionDefs },
     });
-    optionsResult = [...existingOptions, ...created];
+    optionsResult = [
+      ...existingOptions,
+      ...created.map((o) => ({ id: o.id, title: o.title })),
+    ];
   }
 
   const option = (title: string) =>

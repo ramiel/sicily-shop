@@ -9,7 +9,7 @@ type Variant = {
   id: string
   title?: string | null
   options?: Array<{ option?: { title?: string } | null; value?: string | null }> | null
-  calculated_price?: { calculated_amount?: number | null; currency_code?: string } | null
+  calculated_price?: { calculated_amount?: number | null; currency_code?: string | null } | null
 }
 
 type ProductOption = {

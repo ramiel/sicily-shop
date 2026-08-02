@@ -10,7 +10,7 @@ type CardProduct = {
   thumbnail?: string | null
   categories?: Array<{ name: string }> | null
   variants?: Array<{
-    calculated_price?: { calculated_amount?: number | null; currency_code?: string } | null
+    calculated_price?: { calculated_amount?: number | null; currency_code?: string | null } | null
   }> | null
 }
 

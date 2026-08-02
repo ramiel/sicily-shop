@@ -58,7 +58,7 @@ export const getProductByHandle = cache(async (handle: string) => {
 })
 
 export function cheapestPrice(product: {
-  variants?: Array<{ calculated_price?: { calculated_amount?: number | null; currency_code?: string } | null }> | null
+  variants?: Array<{ calculated_price?: { calculated_amount?: number | null; currency_code?: string | null } | null }> | null
 }) {
   const amounts =
     product.variants
@@ -71,9 +71,9 @@ export function cheapestPrice(product: {
   return { amount: Math.min(...amounts), currency_code: currency }
 }
 
-export function formatPrice(amount: number, currencyCode = "eur") {
+export function formatPrice(amount: number, currencyCode?: string | null) {
   return new Intl.NumberFormat("en-IE", {
     style: "currency",
-    currency: currencyCode,
+    currency: currencyCode || "eur",
   }).format(amount)
 }
